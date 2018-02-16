@@ -1,78 +1,50 @@
 <#
 .Synopsis
-   Convert a SID to a user Name
+   Convert a SID to a user or group Name
 .DESCRIPTION
-   Long description
+   Convert one SID or multiple SIDs to user or group Names. Support parameter from pipeline
 .EXAMPLE
-   Example of how to use this cmdlet
+   'S-1-5-32-544' | Convert-SID
 .EXAMPLE
-   Another example of how to use this cmdlet
+   Convert-SID S-1-5-21-1712667194-3812628584-4103615645-46577
+.EXAMPLE
+   Get-Content .\SIDs.txt | Convert-SID
 .INPUTS
-   Inputs to this cmdlet (if any)
+   SID as a string or table of SIDs
 .OUTPUTS
-   Output from this cmdlet (if any)
-.NOTES
-   General notes
-.COMPONENT
-   The component this cmdlet belongs to
-.ROLE
-   The role this cmdlet belongs to
-.FUNCTIONALITY
-   The functionality that best describes this cmdlet
+   User Name (String)
 #>
 function convert-SID
 {
-    [CmdletBinding(DefaultParameterSetName='Parameter Set 1', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  HelpUri = 'http://www.microsoft.com/',
-                  ConfirmImpact='Medium')]
+    [CmdletBinding(PositionalBinding=$false)]
     [Alias()]
     [OutputType([String])]
     Param
     (
-        # Param1 help description
+        # SID
         [Parameter(Mandatory=$true, 
                    ValueFromPipeline=$true,
                    ValueFromPipelineByPropertyName=$true, 
                    ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='Parameter Set 1')]
+                   Position=0)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
-        [ValidateCount(0,5)]
-        [ValidateSet("sun", "moon", "earth")]
-        [Alias("p1")] 
-        $Param1,
-
-        # Param2 help description
-        [Parameter(ParameterSetName='Parameter Set 1')]
-        [AllowNull()]
-        [AllowEmptyCollection()]
-        [AllowEmptyString()]
-        [ValidateScript({$true})]
-        [ValidateRange(0,5)]
-        [int]
-        $Param2,
-
-        # Param3 help description
-        [Parameter(ParameterSetName='Another Parameter Set')]
-        [ValidatePattern("[a-z]*")]
-        [ValidateLength(0,15)]
-        [String]
-        $Param3
+        [Alias('AccountDomainSid')]
+        [String]$SID
     )
 
-    Begin
-    {
-    }
     Process
     {
-        if ($pscmdlet.ShouldProcess("Target", "Operation"))
+        $objSID = New-Object System.Security.Principal.SecurityIdentifier ($SID)
+        Try
         {
+            [String]$user = ($objSID.Translate( [System.Security.Principal.NTAccount])).Value
+        
         }
-    }
-    End
-    {
+        Catch
+        {
+            $user = $null
+        }
+        $user
     }
 }
