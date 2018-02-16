@@ -1,6 +1,6 @@
 <#
 .Synopsis
-   Short description
+   Convert a SID to a user Name
 .DESCRIPTION
    Long description
 .EXAMPLE
@@ -20,7 +20,7 @@
 .FUNCTIONALITY
    The functionality that best describes this cmdlet
 #>
-function Verb-Noun
+function convert-SID
 {
     [CmdletBinding(DefaultParameterSetName='Parameter Set 1', 
                   SupportsShouldProcess=$true, 
